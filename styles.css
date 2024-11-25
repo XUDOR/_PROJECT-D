@@ -39,13 +39,13 @@ h1 {
 }
 
 .nav-menu a {
-  color: white;
+  color: #C6D000;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .nav-menu a:hover {
-  color: #3498db;
+  border-bottom: 2px solid #8BA4A5;
 }
 
 /* Main content styles */
