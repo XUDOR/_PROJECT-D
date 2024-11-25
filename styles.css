@@ -14,7 +14,7 @@ body {
 
 /* Header styles */
 header {
-  background-color: #F2CB0A;
+  background-color: #86B700;
   color: white;
   padding: 1rem;
   
@@ -27,7 +27,7 @@ h1 {
 
 .nav-menu {
   padding: 1rem;
-  background-color: #C69A0C;
+  background-color: #868C07;
 }
 
 .nav-menu ul {
@@ -90,8 +90,8 @@ main {
 
 /* Footer styles */
 footer {
-  background-color: #F2CB0A;
-  color: white;
+  background-color: #86B700;
+  color: #54582B;
   font-size: 1em;
   padding: 1rem;
   text-align: right;
