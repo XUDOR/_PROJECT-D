@@ -21,14 +21,39 @@
 
     <main>
         <div class="grid-container">
+            <!-- Opportunities Section -->
             <div class="grid-item">
                 <h2>Opportunities</h2>
-                
+                <form id="opportunity-form">
+                    <label for="job_title">Job Title:</label>
+                    <input type="text" id="job_title" name="job_title" placeholder="Enter job title" required>
+            
+                    <label for="company_name">Company Name:</label>
+                    <input type="text" id="company_name" name="company_name" placeholder="Enter company name" required>
+            
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" placeholder="Enter job location">
+            
+                    <label for="skills_required">Skills Required (comma-separated):</label>
+                    <input type="text" id="skills_required" name="skills_required" placeholder="e.g., JavaScript, Python">
+            
+                    <label for="job_description">Job Description:</label>
+                    <textarea id="job_description" name="job_description" rows="4" placeholder="Enter job description"></textarea>
+            
+                    <button type="submit" class="Button-Submit">Submit Job</button>
+                </form>
+                <div id="form-response"></div>
             </div>
+            
+            
+
+            <!-- Section 2 -->
             <div class="grid-item">
                 <h2>Section 2</h2>
                 <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
             </div>
+
+            <!-- Section 3 -->
             <div class="grid-item">
                 <h2>Section 3</h2>
                 <p>Duis aute irure dolor in reprehenderit in voluptate.</p>
