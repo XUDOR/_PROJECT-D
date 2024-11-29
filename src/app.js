@@ -1,13 +1,21 @@
 const express = require('express');
 require('dotenv').config();
 const path = require('path');
+const mainRoutes = require('./routes/mainRoutes'); // Import mainRoutes
 
 const app = express();
+
+// Middleware for parsing JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Middleware for serving static files
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Example API endpoint
+// Use the main routes
+app.use(mainRoutes);
+
+// Example API endpoint (optional placeholder)
 app.get('/api/data', (req, res) => {
     res.json({ message: 'Welcome to Project D API!' });
 });
