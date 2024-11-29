@@ -1,52 +1,51 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // DOM Elements
-  const navLinks = document.querySelectorAll('.nav-menu a');
-  const loadingIndicator = document.querySelector('.loading');
-  
-  // Navigation handling
-  navLinks.forEach(link => {
-      link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const section = this.dataset.section;
-          handleNavigation(section);
-      });
-  });
+document.addEventListener('DOMContentLoaded', function () {
+    // Form and DOM elements
+    const opportunityForm = document.getElementById('opportunity-form');
+    const responseDiv = document.getElementById('form-response');
 
-  // Handle navigation with loading state
-  function handleNavigation(section) {
-      showLoading();
-      
-      // Simulate API call or page load
-      setTimeout(() => {
-          hideLoading();
-          updateContent(section);
-      }, 1000);
-  }
+    // Function to submit a job opportunity
+    async function postOpportunity(event) {
+        event.preventDefault();
 
-  // Loading state functions
-  function showLoading() {
-      loadingIndicator.style.display = 'block';
-  }
+        // Gather form data
+        const formData = new FormData(opportunityForm);
+        const job = {
+            job_title: formData.get('job_title'),
+            company_name: formData.get('company_name'),
+            location: formData.get('location'),
+            skills_required: formData.get('skills_required')?.split(',').map(skill => skill.trim()),
+            job_description: formData.get('job_description'),
+        };
 
-  function hideLoading() {
-      loadingIndicator.style.display = 'none';
-  }
+        try {
+            // Send job data to Project B
+            const response = await fetch('/api/jobs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(job),
+            });
 
-  // Update content based on section
-  function updateContent(section) {
-      console.log(`Navigating to ${section}`);
-      // Here you would typically update the page content
-      // based on the selected section
-  }
+            const result = await response.json();
 
-  // Responsive handling
-  let resizeTimer;
-  window.addEventListener('resize', function() {
-      // Debounce resize events
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-          // Handle any responsive adjustments here
-          console.log('Window resized - layout adjusted');
-      }, 250);
-  });
+            if (response.ok) {
+                // Display success message
+                responseDiv.textContent = 'Job posted successfully!';
+                responseDiv.style.color = 'green';
+                opportunityForm.reset(); // Clear form
+            } else {
+                // Display server error message
+                responseDiv.textContent = `Error: ${result.error}`;
+                responseDiv.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Error posting job:', error);
+            responseDiv.textContent = 'Failed to post the job.';
+            responseDiv.style.color = 'red';
+        }
+    }
+
+    // Attach event listener to form submission
+    if (opportunityForm) {
+        opportunityForm.addEventListener('submit', postOpportunity);
+    }
 });
