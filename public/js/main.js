@@ -32,6 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 responseDiv.textContent = 'Job posted successfully!';
                 responseDiv.style.color = 'green';
                 opportunityForm.reset(); // Clear form
+
+                // Forward job data to Project F for immediate notification
+                await fetch('http://localhost:3006/api/communication', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(job),
+                });
             } else {
                 // Display server error message
                 responseDiv.textContent = `Error: ${result.error}`;
