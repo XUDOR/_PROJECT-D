@@ -16,6 +16,18 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
+// ------------------- API STATUS ROUTE ------------------- //
+
+router.get('/api/status', (req, res) => {
+    res.json({
+        status: 'active',
+        version: '1.0',
+        message: 'Project D (Company IO) is running'
+    });
+});
+
+
+
 // Fetch all jobs
 router.get('/api/jobs', async (req, res) => {
     try {
