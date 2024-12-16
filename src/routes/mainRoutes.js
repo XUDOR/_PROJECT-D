@@ -1,8 +1,6 @@
-// mainRoutes.js 
-
-
 const express = require('express');
 const { Pool } = require('pg');
+const axios = require('axios');
 require('dotenv').config();
 
 const router = express.Router();
@@ -16,8 +14,17 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
-// ------------------- API STATUS ROUTE ------------------- //
+// Function to notify Project F
+async function notifyProjectF(message) {
+    try {
+        await axios.post('http://localhost:3006/api/notifications', { message });
+        console.log(`Notified Project F: ${message}`);
+    } catch (error) {
+        console.error('Failed to notify Project F:', error.message);
+    }
+}
 
+// ------------------- API STATUS ROUTE ------------------- //
 router.get('/api/status', (req, res) => {
     res.json({
         status: 'active',
@@ -25,8 +32,6 @@ router.get('/api/status', (req, res) => {
         message: 'Project D (Company IO) is running'
     });
 });
-
-
 
 // Fetch all jobs
 router.get('/api/jobs', async (req, res) => {
@@ -54,11 +59,27 @@ router.post('/api/jobs', async (req, res) => {
             VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *;
         `;
         const values = [job_title, company_name, location, skills_required, job_description];
+        
         const result = await pool.query(query, values);
+
+        // Notify Project F about new job
+        await notifyProjectF(`New job posted: ${job_title} at ${company_name}`);
+
+        // Store in json_store
+        await pool.query(`INSERT INTO json_store (job_json) VALUES ($1)`, [result.rows[0]]);
+
+        // Add JSON bundle notification
+        await notifyProjectF(`JSON Bundle: Job data stored for ${job_title}`);
+
+        // Send API message
+        await axios.post('http://localhost:3006/api/messages', {
+            message: `Job JSON bundle stored in database for: ${job_title}`
+        });
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error('Error inserting job:', error.message);
+        await notifyProjectF(`Error posting job: ${error.message}`);
         res.status(500).json({ error: 'Failed to insert job.' });
     }
 });
@@ -74,7 +95,29 @@ router.get('/api/bundles', async (req, res) => {
     }
 });
 
+// Add a new bundle
+router.post('/api/bundles', async (req, res) => {
+    const bundleData = req.body;
+    
+    try {
+        // Store job bundle and notify
+        const result = await pool.query(
+            `INSERT INTO json_store (user_json, job_json) VALUES (NULL, $1) RETURNING *`,
+            [bundleData]
+        );
+        
+        await notifyProjectF(`Job bundle created: ${bundleData.job_title} at ${bundleData.company_name}`);
+        await axios.post('http://localhost:3006/api/messages', {
+            message: `Job bundle stored in database for: ${bundleData.job_title}`
+        });
 
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error creating bundle:', error.message);
+        await notifyProjectF(`Error creating job bundle: ${error.message}`);
+        res.status(500).json({ error: 'Failed to create bundle' });
+    }
+});
 
 // Example placeholder endpoint
 router.get('/api/data', (req, res) => {
