@@ -33,6 +33,13 @@ router.get('/api/status', (req, res) => {
     });
 });
 
+// ---------------- HEALTHCHECK ---------------- //
+
+router.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'Project D is up and running' });
+});
+
+
 // Fetch all jobs
 router.get('/api/jobs', async (req, res) => {
     try {
